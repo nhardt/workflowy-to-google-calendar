@@ -37,6 +37,12 @@ workflowy metadata or i'll have to assign one. worst case i think a calendar
 named workflowy on the gcal side could be cleared entirely an re-published to
 would work for expensive 1 way sync.
 
+### Auth
+
+Workflowy uses https to send a username and password as form data. There may
+also be 2 factor auth to deal with. Will have to deal with that when I get
+there.
+
 ## Reference
 
 ### Workflowy
