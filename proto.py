@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
-
+# PYTHON_ARGCOMPLETE_OK
 import argparse
 import urllib.request
 import urllib.parse
 import getpass
 import json
+import argcomplete
 
 
 def main():
@@ -14,6 +15,7 @@ def main():
     parser.add_argument(
         "--wf-init", action="store_true", help="read init data from workflowy"
     )
+    argcomplete.autocomplete(parser)
     args = parser.parse_args()
     state = load_state()
     if args.wf_auth:

@@ -114,6 +114,14 @@ The result is a tree encoded as json.
 
 * Python GCal API: https://developers.google.com/calendar/api/guides/overview
 
-### Treelib
+### Python
 
 * https://treelib.readthedocs.io/en/latest/
+* https://pypi.org/project/argcomplete/
+
+```
+sudo activate-global-python-argcomplete
+eval "$(register-python-argcomplete ./proto.py)"
+./proto.py -
+-h         --help     --wf-auth  --wf-init
+```
