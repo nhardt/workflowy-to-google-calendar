@@ -7,7 +7,7 @@ calendar.
 
 ### Prototype
 
-* [ ] authenticate to workflowy
+* [X] authenticate to workflowy
 * [ ] create a sample date entry for testing
 * [ ] read a single entry, document metadata
 * [ ] authenticate to gcal
@@ -41,7 +41,7 @@ would work for expensive 1 way sync.
 
 Workflowy uses https to send a username and password as form data. There may
 also be 2 factor auth to deal with. Will have to deal with that when I get
-there.
+there. After setting up a password I needed to type in my code from Authenticator
 
 ## Reference
 
