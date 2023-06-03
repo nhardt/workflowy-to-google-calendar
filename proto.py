@@ -15,20 +15,25 @@ def main():
     parser.add_argument(
         "--wf-init", action="store_true", help="read init data from workflowy"
     )
+    parser.add_argument(
+        "--parse-init", action="store_true", help="parse data stored in wf_init.json"
+    )
     argcomplete.autocomplete(parser)
     args = parser.parse_args()
     state = load_state()
     if args.wf_auth:
         (username, password) = login()
         wf_auth(state, username, password)
-    elif args.wf_read:
+    elif args.wf_init:
         wf_init(state)
+    elif args.parse_init:
+        wf_parse_init(state)
     else:
         print(parser.print_help())
 
 
 def load_state():
-    with open(".private_json", "r") as f:
+    with open(".private.json", "r") as f:
         return json.load(f)
 
 
@@ -73,7 +78,7 @@ def wf_auth(state, username, password):
             (name, value) = cookie.split("=")
             if name == "sessionid":
                 state["session_id"] = value
-                with open(".private_json", "w") as f:
+                with open(".private.json", "w") as f:
                     json.dump(state, f)
         print("login successful")
 
@@ -89,18 +94,20 @@ def wf_init(state):
     # looking that php api, it looks like filtering and everything is done
     # client side. from what i can tell, the php client just builds the full
     # tree on start up.
-    wf_get_initialization_data(state)
-    pass
 
-
-def wf_get_initialization_data(state):
     ## this call seems to get you the full tree without descriptions
     request = urllib.request.Request("https://workflowy.com/get_initialization_data")
     request.add_header("Cookie", "sessionid=" + state["session_id"])
     response = urllib.request.urlopen(request)
     print(response.info())
     response_body = response.read().decode("utf-8")
-    print(response_body)
+    print("writing response to wf_init.json")
+    with open(".wf_init.json", "w") as f:
+        f.write(response_body)
+
+
+def parse_init(state):
+    pass
 
 
 if __name__ == "__main__":
