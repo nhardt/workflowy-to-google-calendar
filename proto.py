@@ -6,17 +6,27 @@ import urllib.parse
 import getpass
 import json
 import argcomplete
+from treelib import Node, Tree
 
 
 def main():
     # create argparse for wf-auth, wf-read
     parser = argparse.ArgumentParser(description="get commands")
-    parser.add_argument("--wf-auth", action="store_true", help="test auth to workflowy")
     parser.add_argument(
-        "--wf-init", action="store_true", help="read init data from workflowy"
+        "--wf-auth",
+        action="store_true",
+        help="send username and password to workflowy api, "
+        + "write session id to .private.json",
     )
     parser.add_argument(
-        "--parse-init", action="store_true", help="parse data stored in wf_init.json"
+        "--wf-init",
+        action="store_true",
+        help="read init data from workflowy and write it to .wf_init.json",
+    )
+    parser.add_argument(
+        "--wf-parse-init",
+        action="store_true",
+        help="parse data stored in .wf_init.json",
     )
     argcomplete.autocomplete(parser)
     args = parser.parse_args()
@@ -26,7 +36,7 @@ def main():
         wf_auth(state, username, password)
     elif args.wf_init:
         wf_init(state)
-    elif args.parse_init:
+    elif args.wf_parse_init:
         wf_parse_init(state)
     else:
         print(parser.print_help())
@@ -106,8 +116,13 @@ def wf_init(state):
         f.write(response_body)
 
 
-def parse_init(state):
-    pass
+def wf_parse_init(state):
+    # open wf_init.json
+    # parse into treelib tree
+    with open(".wf_init.json", "r") as f:
+        data = json.load(f)
+    tree = Tree()
+    tree.create_node("root", "root")
 
 
 if __name__ == "__main__":
