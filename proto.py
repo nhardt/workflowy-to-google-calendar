@@ -12,7 +12,7 @@ def main():
     parser = argparse.ArgumentParser(description="get commands")
     parser.add_argument("--wf-auth", action="store_true", help="test auth to workflowy")
     parser.add_argument(
-        "--wf-read", action="store_true", help="test read item in workflowy"
+        "--wf-init", action="store_true", help="read init data from workflowy"
     )
     args = parser.parse_args()
     state = load_state()
@@ -20,7 +20,7 @@ def main():
         (username, password) = login()
         wf_auth(state, username, password)
     elif args.wf_read:
-        wf_read(state)
+        wf_init(state)
     else:
         print(parser.print_help())
 
@@ -76,14 +76,29 @@ def wf_auth(state, username, password):
         print("login successful")
 
 
-def wf_read(state, projectid):
+def wf_init(state):
     # i see two other api calls, get_initialization_data and push_and_poll
     # get_initialization_data: https://workflowy.com/get_initialization_data
     # push_and_poll: https://workflowy.com/push_and_poll
     #   this seems to do most of the work. there are 4 actions you can peform:
     #   create, edit, move, delete
     #   each node has properties `projectid`, `name` and `description`
+
+    # looking that php api, it looks like filtering and everything is done
+    # client side. from what i can tell, the php client just builds the full
+    # tree on start up.
+    wf_get_initialization_data(state)
     pass
+
+
+def wf_get_initialization_data(state):
+    ## this call seems to get you the full tree without descriptions
+    request = urllib.request.Request("https://workflowy.com/get_initialization_data")
+    request.add_header("Cookie", "sessionid=" + state["session_id"])
+    response = urllib.request.urlopen(request)
+    print(response.info())
+    response_body = response.read().decode("utf-8")
+    print(response_body)
 
 
 if __name__ == "__main__":

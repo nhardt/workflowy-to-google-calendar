@@ -8,14 +8,17 @@ calendar.
 ### Prototype
 
 * [X] authenticate to workflowy
-* [ ] create a sample date entry for testing
-* [ ] read a single entry, document metadata
+* [X] create a sample date entry for testing at top level
+~~read a single entry, document metadata~~
+* [X] read initialization data to get root node
+* [ ] read top level list to get sample item
+* [ ] print sample item details
 * [ ] authenticate to gcal
 * [ ] publish sample date entry  
 
 ### Roadmap
 
-* [ ] Get all dates or get all entries with a tag
+* [ ] Get all time tags or get all entries tagged for export (#cal)
 * [ ] Publish all dates to calendar named "workflowy"
 * [ ] Republish all: delete all dates, republish
 * [ ] Smart republish: only publish changes
@@ -30,18 +33,73 @@ API that looks half implemented. i'm doing this for fun and to experiment with
 Copilot, so I'm going to use the PHP implementation as API docs and write a
 Python implementation of the API.
 
-### ID
+#### Data Model
 
-A top of mind idea is that I'll need an ID of some sort. this will either exist in the 
-workflowy metadata or i'll have to assign one. worst case i think a calendar
-named workflowy on the gcal side could be cleared entirely an re-published to
-would work for expensive 1 way sync.
+##### Projects
 
-### Auth
+The entire tree is called a project. The id is projectid. Each project has a list
+of child projects, listed under `ch` in the data structure.
 
-Workflowy uses https to send a username and password as form data. There may
-also be 2 factor auth to deal with. Will have to deal with that when I get
-there. After setting up a password I needed to type in my code from Authenticator
+##### ID
+
+Each project has a server side assigned uuid named `id`.
+
+### API Endpoints
+
+#### Auth
+
+Workflowy uses https to send a username and password as form data
+
+Endpoint: https://workflowy.com/ajax\_login
+Post data: username, password
+Result Header: a session cookie
+Result Body JSON: success: true|false
+
+#### Init
+
+Endpoint: https://workflowy.com/get\_initialization\_data
+Post header: session cookie
+Response: JSON encoded tree struccture
+
+This gets your initial tree, not sure to what depth. It does not appear to have
+descriptions. 4410c0683221 is what might be displayed in your browser when you
+focus on a node, and it is the last part of the node id/uuid.
+
+The result is a tree encoded as json.
+
+```json
+{
+    "projectTreeData":
+    {
+        "mainProjectTreeInfo":
+        {
+            "rootProject": null,
+            "rootProjectChildren":
+            [
+                {
+                    "id": "ed8e78eb-dffc-4128-1a44-c60cda112ee6",
+                    "nm": "Past",
+                    "ct": 97551049,
+                    "metadata": {},
+                    "lm": 100652553,
+                    "ch": []
+                }
+            ]
+        } 
+    }
+}
+```
+
+
+```json
+{
+    "id": "d1fb00f8-a095-2483-decd-4410c0683221",
+    "nm": "<time startYear=\"2023\" startMonth=\"6\" startDay=\"2\">Fri, Jun 2, 2023</time> post this test node to google calendar",
+    "ct": 100726143,
+    "metadata": {},
+    "lm": 100780842
+}
+```
 
 ## Reference
 
@@ -56,3 +114,6 @@ there. After setting up a password I needed to type in my code from Authenticato
 
 * Python GCal API: https://developers.google.com/calendar/api/guides/overview
 
+### Treelib
+
+* https://treelib.readthedocs.io/en/latest/
