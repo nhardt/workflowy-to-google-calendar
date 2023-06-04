@@ -1,2 +1,4 @@
 .private.json
 .wf_init.json
+.gcal.credentials.json
+.gcal.token.json

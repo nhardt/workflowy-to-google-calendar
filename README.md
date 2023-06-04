@@ -112,7 +112,38 @@ The result is a tree encoded as json.
 
 ### Google Calendar
 
+#### Setup
+
+This part is going to be a bit arduous. There might be an easier way for a
+single human to manage their own calendar with scripting but what I've found are
+instructions to write code against gcal as if you are an app developer.
+
+##### Create Project
+
+If you want to use this app to sync your workflowy to gcal, from what i've
+found so far, you need to do these things.
+
+https://developers.google.com/workspace/guides/create-project
+
+##### Auth
+
+Following the docs, to do this on your own you'll need to create an OAuth
+client to programatically access your google calendar.
+
+https://developers.google.com/calendar/api/quickstart/python#authorize\_credentials\_for\_a\_desktop\_application
+
+The end result of these few steps are what you save to the
+.gcal.credentials.json file. 
+
+##### Enable calendar API
+
+I thought I followed the docs on this before running the script, but on first
+login if you haven't done this it will pop up a link to enable it.
+
+#### Reference
+
 * Python GCal API: https://developers.google.com/calendar/api/guides/overview
+* https://developers.google.com/calendar/api/quickstart/python
 
 ### Python
 
