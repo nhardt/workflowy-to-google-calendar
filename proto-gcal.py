@@ -3,8 +3,8 @@
 
 import os
 import pickle
-from google.oauth2.credentials import Credentials
 from google.auth.transport.requests import Request
+from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 
@@ -36,18 +36,24 @@ def get_calendar_events():
 
     service = build("calendar", "v3", credentials=creds)
     calendar_list = service.calendarList().list(pageToken=None).execute()
-    print(calendar_list)
+    calenderId = None
     for calendar_list_entry in calendar_list["items"]:
-        print(calendar_list_entry["summary"])
+        if calendar_list_entry["summary"] == "workflowy":
+            calendarId = calendar_list_entry["id"]
+            break
+    if not calendarId:
+        print("Calendar named 'workflowy' not found")
+        return
 
-    # events_result = service.events().list(
-    #    calendarId="primary", maxResults=10).execute()
-    # events = events_result.get("items", [])
-    # if not events:
-    #     print("No upcoming events found.")
-    # for event in events:
-    #     start = event["start"].get("dateTime", event["start"].get("date"))
-    #     print(f'{start} - {event["summary"]}')
+    events_result = (
+        service.events().list(calendarId=calendarId, maxResults=10).execute()
+    )
+    events = events_result.get("items", [])
+    if not events:
+        print("No upcoming events found.")
+    for event in events:
+        start = event["start"].get("dateTime", event["start"].get("date"))
+        print(f'{start} - {event["summary"]}')
 
 
 if __name__ == "__main__":

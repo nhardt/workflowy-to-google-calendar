@@ -13,8 +13,11 @@ calendar.
 * [X] read initialization data to get root node
 * [X] parse top level tree from initial data
 * [X] find sample item in tree
-* [ ] authenticate to gcal
-* [ ] publish sample date entry to gcal
+* [X] authenticate to gcal
+* [X] pull list of calendars from API
+* [X] pull events from "workflowy" calendar
+* [ ] publish any event to gcal
+* [ ] publish sample workflowy event to gcal
 
 ### Roadmap
 
@@ -118,7 +121,9 @@ This part is going to be a bit arduous. There might be an easier way for a
 single human to manage their own calendar with scripting but what I've found are
 instructions to write code against gcal as if you are an app developer.
 
-##### Create Project
+In your google calendar, create a new calendar called "workflowy".
+
+##### Create Project That Can Access The Calendar API
 
 If you want to use this app to sync your workflowy to gcal, from what i've
 found so far, you need to do these things.
