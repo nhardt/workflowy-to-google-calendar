@@ -11,8 +11,8 @@ calendar.
 * [X] create a sample date entry for testing at top level
 ~~read a single entry, document metadata~~
 * [X] read initialization data to get root node
-* [ ] build tree from initial data
-* [ ] find sample item in tree
+* [X] parse top level tree from initial data
+* [X] find sample item in tree
 * [ ] authenticate to gcal
 * [ ] publish sample date entry to gcal
 

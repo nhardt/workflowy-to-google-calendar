@@ -121,8 +121,23 @@ def wf_parse_init(state):
     # parse into treelib tree
     with open(".wf_init.json", "r") as f:
         data = json.load(f)
+
+    # init data starts with this
+    # {
+    #    "projectTreeData": {
+    #      "mainProjectTreeInfo": {
+    #        "rootProject": null,
+    #        "rootProjectChildren": [
+    #          {
+    #            "id": "ed8e78eb-dffc-4128-1a44-c60cda112ee6",
     tree = Tree()
     tree.create_node("root", "root")
+    for child in data["projectTreeData"]["mainProjectTreeInfo"]["rootProjectChildren"]:
+        tree.create_node(child["nm"], child["id"], parent="root", data=child)
+        # search id as string for prototype node
+        if state["prototype_node"] in child["id"]:
+            print(f"found prototype node, {child['nm']}")
+    tree.show()
 
 
 if __name__ == "__main__":
