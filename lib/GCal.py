@@ -50,11 +50,6 @@ class GCal:
             .execute()
         )
         return events_result.get("items", [])
-        if not events:
-            print("No upcoming events found.")
-        for event in events:
-            start = event["start"].get("dateTime", event["start"].get("date"))
-            print(f'{start} - {event["summary"]}')
 
     def insert_event(service, calendarId, summary, start, end):
         event = {

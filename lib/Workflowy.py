@@ -3,7 +3,7 @@ import urllib.request
 import urllib.parse
 import getpass
 import json
-import argcomplete
+import os
 from treelib import Node, Tree
 
 
@@ -14,6 +14,7 @@ class Workflowy:
         self.state_file = state_file
         self.last_init_file = last_init_file
         self.state = self.load_state()
+        self.root_project_node = None
 
     def load_state(self):
         with open(self.state_file, "r") as f:
@@ -21,6 +22,10 @@ class Workflowy:
 
     def has_session(self):
         return "sessionid" in self.state
+
+    def has_init(self):
+        # return true if init file exists
+        return os.path.isfile(self.last_init_file)
 
     def login(self):
         username = input("Username [%s]: " % getpass.getuser())
@@ -65,25 +70,19 @@ class Workflowy:
         with open(self.last_init_file, "w") as f:
             f.write(response_body)
 
-    def parse_init():
+    def parse_init(self):
         with open(self.last_init_file, "r") as f:
             data = json.load(f)
-
-        # init data starts with this
-        # {
-        #    "projectTreeData": {
-        #      "mainProjectTreeInfo": {
-        #        "rootProject": null,
-        #        "rootProjectChildren": [
-        #          {
-        #            "id": "ed8e78eb-dffc-4128-1a44-c60cda112ee6",
-        tree = Tree()
-        tree.create_node("root", "root")
-        for child in data["projectTreeData"]["mainProjectTreeInfo"][
+        self.root_project_node = data["projectTreeData"]["mainProjectTreeInfo"][
             "rootProjectChildren"
-        ]:
-            tree.create_node(child["nm"], child["id"], parent="root", data=child)
-        tree.show()
+        ]
+        # tree = Tree()
+        # tree.create_node("root", "root")
+        # for child in data["projectTreeData"]["mainProjectTreeInfo"][
+        #     "rootProjectChildren"
+        # ]:
+        #     tree.create_node(child["nm"], child["id"], parent="root", data=child)
+        # tree.show()
 
     def push_and_poll(self):
         # push_and_poll: https://workflowy.com/push_and_poll
@@ -93,9 +92,18 @@ class Workflowy:
         raise NotImplementedError
 
     def get_events(self):
-        # iterate all projects in tree
-        # if title contains <time /> tag, parse it
-        # return all
+        events = []
+        self._get_nodes_that_are_events(self.root_project_node, events)
+        return events
+
+    def _get_nodes_that_are_events(self, project):
+        for node in project:
+            if node["nm"].contains("<time"):
+                events.append(node)
+                print(node)
+            else:
+                self._get_nodes_that_are_events(node["ch"])
+
 
 if __name__ == "__main__":
     main()

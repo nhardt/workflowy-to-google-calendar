@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 
-import Workflowy from lib.Worfklowy
-import GCal from lib.GCal
-import Event from lib.Event
+from lib.Workflowy import Workflowy
+from lib.GCal import GCal
+from lib.Event import Event
+
 
 class Event:
     def __init__(self, uuid, name, start, end):
@@ -14,15 +15,17 @@ class Event:
 
 def main():
     wf = Workflowy()
-    if wf.has_session():
+    if wf.has_init():
+        wf.parse_init()
+    elif wf.has_session():
         wf.login()
     else:
         wf.init()
 
-    gcal = GCal()
-    gcal.get_events()
-
     events = wf.get_events()
+
+    # gcal = GCal()
+    # gcal.get_events()
 
     # for each wf event, gather uuid, name, start, end
     # for each gcal event, check uuid for wf
