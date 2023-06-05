@@ -18,10 +18,12 @@ TOKEN_FILE = ".gcal.token.json"
 
 
 def main():
-    get_calendar_events()
+    service = make_calendar_service()
+    workflowy_calendar_id = get_workflowy_calendar_id(service)
+    get_calendar_events(service, workflowy_calendar_id)
 
 
-def get_calendar_events():
+def make_calendar_service():
     creds = None
     if os.path.exists(TOKEN_FILE):
         creds = Credentials.from_authorized_user_file(TOKEN_FILE, SCOPES)
@@ -34,17 +36,18 @@ def get_calendar_events():
         with open(TOKEN_FILE, "w") as token:
             token.write(creds.to_json())
 
-    service = build("calendar", "v3", credentials=creds)
+    return build("calendar", "v3", credentials=creds)
+
+
+def get_workflowy_calendar_id(service):
     calendar_list = service.calendarList().list(pageToken=None).execute()
-    calenderId = None
     for calendar_list_entry in calendar_list["items"]:
         if calendar_list_entry["summary"] == "workflowy":
-            calendarId = calendar_list_entry["id"]
-            break
-    if not calendarId:
-        print("Calendar named 'workflowy' not found")
-        return
+            return calendar_list_entry["id"]
+    raise Exception("workflowy calendar not found")
 
+
+def get_calendar_events(service, calendarId):
     events_result = (
         service.events().list(calendarId=calendarId, maxResults=10).execute()
     )
