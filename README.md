@@ -16,7 +16,7 @@ calendar.
 * [X] authenticate to gcal
 * [X] pull list of calendars from API
 * [X] pull events from "workflowy" calendar
-* [ ] publish any event to gcal
+* [X] publish any event to gcal
 * [ ] publish sample workflowy event to gcal
 
 ### Roadmap
@@ -47,7 +47,7 @@ of child projects, listed under `ch` in the data structure.
 
 Each project has a server side assigned uuid named `id`.
 
-### API Endpoints
+### Endpoints
 
 #### Auth
 
@@ -149,6 +149,7 @@ login if you haven't done this it will pop up a link to enable it.
 
 * Python GCal API: https://developers.google.com/calendar/api/guides/overview
 * https://developers.google.com/calendar/api/quickstart/python
+* https://developers.google.com/calendar/api/v3/reference/calendarList/list#python
 
 ### Python
 

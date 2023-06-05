@@ -21,6 +21,13 @@ def main():
     service = make_calendar_service()
     workflowy_calendar_id = get_workflowy_calendar_id(service)
     get_calendar_events(service, workflowy_calendar_id)
+    insert_event(
+        service,
+        workflowy_calendar_id,
+        "test event not yet from workflowy",
+        "2023-06-04T18:00:00-07:00",
+        "2023-06-04T19:00:00-07:00",
+    )
 
 
 def make_calendar_service():
@@ -57,6 +64,27 @@ def get_calendar_events(service, calendarId):
     for event in events:
         start = event["start"].get("dateTime", event["start"].get("date"))
         print(f'{start} - {event["summary"]}')
+
+
+def insert_event(service, calendarId, summary, start, end):
+    event = {
+        "summary": summary,
+        "location": "",
+        "description": "",
+        "start": {
+            "dateTime": start,
+            "timeZone": "America/Los_Angeles",
+        },
+        "end": {
+            "dateTime": end,
+            "timeZone": "America/Los_Angeles",
+        },
+        "reminders": {
+            "useDefault": False,
+        },
+    }
+    event = service.events().insert(calendarId=calendarId, body=event).execute()
+    print(f"Event created: {event.get('htmlLink')}")
 
 
 if __name__ == "__main__":
