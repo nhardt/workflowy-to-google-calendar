@@ -17,10 +17,10 @@ TOKEN_FILE = ".gcal.token.json"
 
 class GCal:
     def __init__(self):
-        self.service = make_calendar_service()
-        self.workflowy_calendar_id = get_calendar_id("workflowy")
+        self.service = self.make_calendar_service()
+        self.workflowy_calendar_id = self.get_calendar_id("workflowy")
 
-    def make_calendar_service():
+    def make_calendar_service(self):
         creds = None
         if os.path.exists(TOKEN_FILE):
             creds = Credentials.from_authorized_user_file(TOKEN_FILE, SCOPES)
@@ -45,13 +45,14 @@ class GCal:
 
     def get_events(self):
         events_result = (
-            service.events()
+            self.service.events()
             .list(calendarId=self.workflowy_calendar_id, maxResults=10)
             .execute()
         )
         return events_result.get("items", [])
 
-    def insert_event(service, calendarId, summary, start, end):
+    def insert_event(self, uuid, summary, start, end):
+        print(f"inserting event {uuid} {summary} {start} {end}")
         event = {
             "summary": summary,
             "location": "",
@@ -68,5 +69,7 @@ class GCal:
                 "useDefault": False,
             },
         }
-        event = service.events().insert(calendarId=calendarId, body=event).execute()
+        self.service.events().insert(
+            calendarId=self.workflowy_calendar_id, body=event
+        ).execute()
         # print(f"Event created: {event.get('htmlLink')}")

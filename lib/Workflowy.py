@@ -5,12 +5,13 @@ import getpass
 import json
 import os
 from treelib import Node, Tree
+from lib.Event import Event
+import re
+from datetime import datetime
 
 
 class Workflowy:
-    def __init__(
-        self, state_file=".wf.token.json", last_init_file=".wf.last_init.json"
-    ):
+    def __init__(self, state_file=".wf.token.json", last_init_file=".wf_init.json"):
         self.state_file = state_file
         self.last_init_file = last_init_file
         self.state = self.load_state()
@@ -96,13 +97,25 @@ class Workflowy:
         self._get_nodes_that_are_events(self.root_project_node, events)
         return events
 
-    def _get_nodes_that_are_events(self, project):
+    def _get_nodes_that_are_events(self, project, events):
         for node in project:
-            if node["nm"].contains("<time"):
-                events.append(node)
-                print(node)
+            # check to see if name contains <time
+            if "<time" in node["nm"]:
+                # parse time tag from format
+                # <time startYear="2023" startMonth="6" startDay="1"></time>
+                # match
+                year = re.search('startYear="(\d+)"', node["nm"]).group(1)
+                month = re.search('startMonth="(\d+)"', node["nm"]).group(1)
+                day = re.search('startDay="(\d+)"', node["nm"]).group(1)
+                # everything after the end time tag is the name of the event
+                name = node["nm"].split("</time>")[1].strip()
+                startDate = datetime(int(year), int(month), int(day), hour=17)
+                endDate = datetime(int(year), int(month), int(day), hour=18)
+                if name and startDate > datetime.now():
+                    events.append(Event(node["id"], name, startDate, startDate))
             else:
-                self._get_nodes_that_are_events(node["ch"])
+                if "ch" in node:
+                    self._get_nodes_that_are_events(node["ch"], events)
 
 
 if __name__ == "__main__":
