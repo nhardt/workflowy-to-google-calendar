@@ -17,7 +17,7 @@ calendar.
 * [X] pull list of calendars from API
 * [X] pull events from "workflowy" calendar
 * [X] publish any event to gcal
-* [ ] publish sample workflowy event to gcal
+* [X] publish sample workflowy event to gcal
 
 ### Roadmap
 

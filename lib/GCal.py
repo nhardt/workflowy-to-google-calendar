@@ -52,8 +52,11 @@ class GCal:
         return events_result.get("items", [])
 
     def insert_event(self, uuid, summary, start, end):
-        print(f"inserting event {uuid} {summary} {start} {end}")
+        print(f"inserting event '{uuid}' {summary} {start} {end}")
+        # convert uuid from '12345678-1234-1234-1234-123456789012' to hex digits
+        uuid = uuid.replace("-", "")
         event = {
+            "id": uuid,
             "summary": summary,
             "location": "",
             "description": "",
