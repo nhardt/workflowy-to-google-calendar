@@ -1,7 +1,7 @@
 # Workflowy Calendar
 
-Workflowy calendar is a simple tool to synchronize dates in workflowy to google
-calendar.
+Workflowy calendar is a simple tool to synchronize dates from Workflowy to
+Google Calendar.
 
 ## Plan
 
@@ -19,13 +19,20 @@ calendar.
 * [X] publish any event to gcal
 * [X] publish sample workflowy event to gcal
 
+### MUP (minimum useful product)
+
+* [X] Read all entries
+* [X] Search for notes tagged with #calendar and a date
+* [X] sync data for event to gcal based on uuid
+  * [X] if no uuid, create
+  * [X] if uuid, update if needed]
+
 ### Roadmap
 
-* [ ] Get all time tags or get all entries tagged for export (#cal)
-* [ ] Publish all dates to calendar named "workflowy"
-* [ ] Republish all: delete all dates, republish
+* [X] Publish all dates to calendar named "workflowy"
 * [ ] Smart republish: only publish changes
 * [ ] 2 way sync: read/write data on both ends
+* [ ] Automate run
 
 ## Notes
 

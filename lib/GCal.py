@@ -51,9 +51,19 @@ class GCal:
         )
         return events_result.get("items", [])
 
+    def get_event(self, uuid):
+        uuid = uuid.replace("-", "")
+        try:
+            return (
+                self.service.events()
+                .get(calendarId=self.workflowy_calendar_id, eventId=uuid)
+                .execute()
+            )
+        except:
+            return None
+
     def insert_event(self, uuid, summary, start, end):
         print(f"inserting event '{uuid}' {summary} {start} {end}")
-        # convert uuid from '12345678-1234-1234-1234-123456789012' to hex digits
         uuid = uuid.replace("-", "")
         event = {
             "id": uuid,
@@ -76,3 +86,27 @@ class GCal:
             calendarId=self.workflowy_calendar_id, body=event
         ).execute()
         # print(f"Event created: {event.get('htmlLink')}")
+
+    def update_event(self, uuid, summary, start, end):
+        print(f"update event '{uuid}' {summary} {start} {end}")
+        uuid = uuid.replace("-", "")
+        event = {
+            "id": uuid,
+            "summary": summary,
+            "location": "",
+            "description": "",
+            "start": {
+                "dateTime": start,
+                "timeZone": "America/Los_Angeles",
+            },
+            "end": {
+                "dateTime": end,
+                "timeZone": "America/Los_Angeles",
+            },
+            "reminders": {
+                "useDefault": False,
+            },
+        }
+        self.service.events().update(
+            calendarId=self.workflowy_calendar_id, eventId=uuid, body=event
+        ).execute()

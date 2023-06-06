@@ -11,7 +11,7 @@ from datetime import datetime
 
 
 class Workflowy:
-    def __init__(self, state_file=".wf.token.json", last_init_file=".wf_init.json"):
+    def __init__(self, state_file=".wf.token.json", last_init_file=".wf.init.json"):
         self.state_file = state_file
         self.last_init_file = last_init_file
         self.state = self.load_state()
@@ -99,20 +99,26 @@ class Workflowy:
 
     def _get_nodes_that_are_events(self, project, events):
         for node in project:
-            # check to see if name contains <time
-            if "<time" in node["nm"]:
+            if "no" in node and "<time" in node["nm"] and "#calendar" in node["no"]:
                 # parse time tag from format
                 # <time startYear="2023" startMonth="6" startDay="1"></time>
-                # match
-                year = re.search('startYear="(\d+)"', node["nm"]).group(1)
-                month = re.search('startMonth="(\d+)"', node["nm"]).group(1)
-                day = re.search('startDay="(\d+)"', node["nm"]).group(1)
+                year = int(re.search('startYear="(\d+)"', node["nm"]).group(1))
+                month = int(re.search('startMonth="(\d+)"', node["nm"]).group(1))
+                day = int(re.search('startDay="(\d+)"', node["nm"]).group(1))
+                if "startHour" in node["nm"]:
+                    hour = int(re.search('startHour="(\d+)"', node["nm"]).group(1))
+                else:
+                    hour = 17
+                if "startMinute" in node["nm"]:
+                    minute = int(re.search('startMinute="(\d+)"', node["nm"]).group(1))
+                else:
+                    minute = 0
                 # everything after the end time tag is the name of the event
                 name = node["nm"].split("</time>")[1].strip()
-                startDate = datetime(int(year), int(month), int(day), hour=17)
-                endDate = datetime(int(year), int(month), int(day), hour=18)
+                startDate = datetime(year, month, day, hour=hour, minute=minute)
+                endDate = datetime(year, month, day, hour=hour + 1, minute=minute)
                 if name and startDate > datetime.now():
-                    events.append(Event(node["id"], name, startDate, startDate))
+                    events.append(Event(node["id"], name, startDate, endDate))
             else:
                 if "ch" in node:
                     self._get_nodes_that_are_events(node["ch"], events)
